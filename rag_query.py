@@ -55,7 +55,7 @@ except Exception:
 Provider = Literal["auto", "gemini", "openai"]
 
 
-def _gemini_client(model_name: str = "gemini-pro"):
+def _gemini_client(model_name: str = "gemini-2.5-flash"):
     if not HAS_GEMINI:
         return None
     api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
@@ -139,7 +139,7 @@ def answer_with_llm(
     context: str,
     provider: Provider = "auto",
     openai_model: str = "gpt-4o-mini",
-    gemini_model: str = "gemini-pro",
+    gemini_model: str = "gemini-2.5-flash",
     temperature: float = 0.2,
 ) -> str:
     """Generate an answer grounded on context using the chosen LLM provider."""
@@ -172,7 +172,8 @@ def answer_with_llm(
         if not client:
             return _fallback_answer(query, context)
         try:
-            resp = client.generate_content([SYSTEM_PROMPT, user_prompt])
+            full_prompt = f"{SYSTEM_PROMPT}\n\n{user_prompt}"
+            resp = client.generate_content(full_prompt)
             return (getattr(resp, "text", None) or "").strip() or _fallback_answer(query, context)
         except Exception as e:
             logger.error(f"Gemini error: {e}")
