@@ -8,6 +8,8 @@ Usage:
     python rag_langchain.py --query "What is the objective?" --top-k 5 --use-native
     python rag_langchain.py --query "Explain the workflow" --top-k 3 --use-native --verbose
     python rag_langchain.py --query "What are the milestones?" --show-sources --use-native
+    
+Note: Use --use-native to avoid Google API quota issues (uses all-MiniLM-L6-v2 embeddings)
 """
 
 import os
@@ -36,12 +38,8 @@ def get_vectorstore(
     persist_directory: str = "./vectordb"
 ) -> Chroma:
     """
-    Load existing ChromaDB vector store with Google embeddings.
-    
-    Note: We use GoogleGenerativeAIEmbeddings here for consistency with LangChain,
-    but the existing data uses all-MiniLM-L6-v2. For production, ensure embeddings match.
+    Load existing ChromaDB vector store with Google Gemini embeddings.
     """
-    # Use Google's embeddings (or switch to HuggingFaceEmbeddings for consistency)
     embeddings = GoogleGenerativeAIEmbeddings(
         model="models/embedding-001",
         google_api_key=os.getenv("GOOGLE_API_KEY")
@@ -59,13 +57,11 @@ def get_vectorstore(
 
 def get_vectorstore_native() -> Chroma:
     """
-    Alternative: Use native ChromaDB without LangChain's embedding wrapper.
-    This preserves the existing all-MiniLM-L6-v2 embeddings.
+    Use HuggingFace embeddings (all-MiniLM-L6-v2) to match existing vector database.
+    This avoids Google API embedding quota issues.
     """
-    import chromadb
     from langchain_community.embeddings import HuggingFaceEmbeddings
     
-    # Match the original embedding model
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
@@ -76,6 +72,7 @@ def get_vectorstore_native() -> Chroma:
         persist_directory="./vectordb"
     )
     
+    logger.info("Using HuggingFace embeddings (all-MiniLM-L6-v2) - no API quota needed")
     return vectorstore
 
 
@@ -193,7 +190,7 @@ def main():
     parser.add_argument("--show-sources", action="store_true", help="Show source documents")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
     parser.add_argument("--use-native", action="store_true", 
-                       help="Use native all-MiniLM-L6-v2 embeddings instead of Google embeddings")
+                       help="Use HuggingFace all-MiniLM-L6-v2 embeddings (avoids Google API quota)")
     
     args = parser.parse_args()
     
@@ -210,7 +207,6 @@ def main():
     try:
         # Load vector store
         if args.use_native:
-            logger.info("Using native HuggingFace embeddings (all-MiniLM-L6-v2)")
             vectorstore = get_vectorstore_native()
         else:
             vectorstore = get_vectorstore(args.collection, args.db_dir)
