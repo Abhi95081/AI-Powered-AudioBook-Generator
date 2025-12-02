@@ -30,70 +30,181 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for compact, attractive UI
+# Custom CSS for enhanced UI
 st.markdown("""
 <style>
-    /* Reduce padding and margins */
-    .block-container {
-        padding-top: 2rem !important;
-        padding-bottom: 1rem !important;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    
+    * {
+        font-family: 'Inter', sans-serif;
     }
     
-    /* Compact tabs */
+    /* Reduce padding and margins */
+    .block-container {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1rem !important;
+        max-width: 1200px;
+    }
+    
+    /* Modern tabs with gradient */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 4px;
-        background-color: #f0f2f6;
-        padding: 4px;
-        border-radius: 8px;
+        gap: 6px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 6px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     }
     
     .stTabs [data-baseweb="tab"] {
-        height: 40px;
-        padding: 8px 16px;
-        border-radius: 6px;
+        height: 45px;
+        padding: 10px 20px;
+        border-radius: 8px;
         font-weight: 600;
         font-size: 0.95rem;
+        background-color: transparent;
+        color: rgba(255, 255, 255, 0.7);
     }
     
-    /* Modern buttons */
+    .stTabs [data-baseweb="tab"][aria-selected="true"] {
+        background-color: white;
+        color: #667eea;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Primary buttons with gradient */
+    .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 0.6rem 1.2rem;
+        transition: all 0.3s;
+        border: none;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .stButton > button[kind="primary"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Secondary buttons */
     .stButton > button {
         border-radius: 8px;
         font-weight: 600;
         transition: all 0.2s;
-        border: none;
+        border: 2px solid #e0e0e0;
     }
     
     .stButton > button:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-color: #667eea;
     }
     
-    /* Compact expander */
+    /* Expander with gradient header */
     .streamlit-expanderHeader {
         font-size: 0.95rem;
         font-weight: 600;
+        background: linear-gradient(90deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 8px;
+        padding: 0.8rem !important;
     }
     
-    /* Progress bar styling */
+    .streamlit-expanderHeader:hover {
+        background: linear-gradient(90deg, #e0e7ff 0%, #c7d2fe 100%);
+    }
+    
+    /* Progress bar with animation */
     .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #667eea, #764ba2);
+        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        background-size: 200% 100%;
+        animation: gradient 2s ease infinite;
     }
     
-    /* File uploader compact */
+    @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    /* File uploader styling */
     [data-testid="stFileUploader"] {
         padding: 0.5rem !important;
+        border: 2px dashed #667eea;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
     }
     
-    /* Compact headers */
+    [data-testid="stFileUploader"]:hover {
+        border-color: #764ba2;
+        background: linear-gradient(135deg, #e0e7ff 0%, #ffffff 100%);
+    }
+    
+    /* Headers */
     h1, h2, h3 {
         margin-top: 0.5rem !important;
         margin-bottom: 0.5rem !important;
+        color: #1a1a1a;
     }
     
-    /* Info boxes */
+    h2 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 700;
+    }
+    
+    /* Info/Success/Error boxes */
     .stAlert {
-        padding: 0.5rem 1rem !important;
+        padding: 0.8rem 1rem !important;
         margin: 0.5rem 0 !important;
+        border-radius: 10px;
+        border-left: 4px solid;
+    }
+    
+    /* Status container */
+    [data-testid="stStatusWidget"] {
+        background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+        border-radius: 12px;
+        border: 1px solid #e0e0e0;
+    }
+    
+    /* Text areas */
+    .stTextArea textarea {
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+        font-family: 'Courier New', monospace;
+    }
+    
+    .stTextArea textarea:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* Download button styling */
+    .stDownloadButton > button {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        border-radius: 10px;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+    }
+    
+    .stDownloadButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+    }
+    
+    /* Checkboxes */
+    .stCheckbox {
+        padding: 0.3rem 0;
+    }
+    
+    /* Audio player */
+    audio {
+        width: 100%;
+        border-radius: 10px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -107,16 +218,24 @@ if 'last_audio_path' not in st.session_state:
     st.session_state.last_audio_path = None
 if 'last_audio_filename' not in st.session_state:
     st.session_state.last_audio_filename = None
+if 'last_extracted_text' not in st.session_state:
+    st.session_state.last_extracted_text = None
+if 'last_document_name' not in st.session_state:
+    st.session_state.last_document_name = None
 
 # Load API key from .env
 from dotenv import load_dotenv
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
 
-# Sidebar - Compact version
+# Sidebar - Enhanced version
 with st.sidebar:
-    st.markdown("### 🎧 AudioBook Generator")
-    st.caption("Transform documents into audiobooks with AI")
+    st.markdown("""
+    <div style='text-align: center; padding: 1rem 0;'>
+        <h2 style='color: #667eea; margin: 0;'>🎧 AudioBook<br/>Generator</h2>
+        <p style='color: #888; font-size: 0.85rem; margin: 0.5rem 0;'>AI-Powered Audio Creation</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     if api_key:
         st.success("✅ API Key Active", icon="🔑")
@@ -124,16 +243,31 @@ with st.sidebar:
         st.error("❌ No API Key", icon="🔑")
     
     st.markdown("---")
+    
     st.markdown("""
-    **Quick Guide:**
-    - 📤 Upload docs (PDF/DOCX/TXT)
-    - 🎙️ Generate audio
-    - 💬 Ask questions via RAG
-    """)
+    <div style='background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 1rem; border-radius: 10px;'>
+        <h4 style='margin: 0 0 0.8rem 0; color: #667eea;'>✨ Features</h4>
+        <p style='margin: 0.3rem 0; font-size: 0.9rem;'>📤 Multi-format upload</p>
+        <p style='margin: 0.3rem 0; font-size: 0.9rem;'>🎙️ High-quality TTS</p>
+        <p style='margin: 0.3rem 0; font-size: 0.9rem;'>🤖 AI enhancement</p>
+        <p style='margin: 0.3rem 0; font-size: 0.9rem;'>💬 RAG-powered Q&A</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    st.caption("Built with Streamlit • Edge-TTS • Gemini AI")
 
-# Main header - Compact
-st.markdown("## 🎧 AI AudioBook Generator")
-st.caption("Upload documents • Generate audio • Ask questions with AI")
+# Main header - Enhanced
+st.markdown("""
+<div style='text-align: center; padding: 1rem 0;'>
+    <h1 style='margin: 0; font-size: 2.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;'>
+        🎧 AI AudioBook Generator
+    </h1>
+    <p style='margin: 0.5rem 0 0 0; color: #666; font-size: 1rem;'>
+        Transform documents into audio • AI-powered enhancement • Smart Q&A
+    </p>
+</div>
+""", unsafe_allow_html=True)
 st.markdown("")  # Small spacer
 
 # Main content
@@ -143,9 +277,9 @@ tab1, tab2 = st.tabs(["📤 Upload & Generate", "💬 Q&A Chat"])
 # TAB 1: Upload & Generate
 # ===========================
 with tab1:
-    # Show last generated audio if exists - Compact version
+    # Show last generated audio if exists - Enhanced version
     if st.session_state.last_audio_path and os.path.exists(st.session_state.last_audio_path):
-        with st.expander("🎧 Last Generated Audio", expanded=False):
+        with st.expander("🎧 Last Generated AudioBook • Ready to Play", expanded=False):
             with open(st.session_state.last_audio_path, "rb") as audio_file:
                 audio_bytes = audio_file.read()
                 st.audio(audio_bytes, format="audio/wav")
@@ -163,6 +297,35 @@ with tab1:
                 if st.button("🗑️ Clear", use_container_width=True):
                     st.session_state.last_audio_path = None
                     st.session_state.last_audio_filename = None
+                    st.rerun()
+    
+    # Show last extracted text if exists
+    if st.session_state.last_extracted_text:
+        with st.expander(f"📝 Document Content • {st.session_state.last_document_name}", expanded=False):
+            st.text_area(
+                "Document content",
+                st.session_state.last_extracted_text,
+                height=250,
+                disabled=True,
+                label_visibility="collapsed"
+            )
+            col_c, col_d, col_e = st.columns(3)
+            with col_c:
+                st.caption(f"📊 {len(st.session_state.last_extracted_text)} characters")
+            with col_d:
+                # Download button for extracted text
+                txt_filename = st.session_state.last_document_name.rsplit('.', 1)[0] + "_extracted.txt"
+                st.download_button(
+                    "📥 Download Text",
+                    data=st.session_state.last_extracted_text,
+                    file_name=txt_filename,
+                    mime="text/plain",
+                    use_container_width=True
+                )
+            with col_e:
+                if st.button("🗑️ Clear Text", use_container_width=True):
+                    st.session_state.last_extracted_text = None
+                    st.session_state.last_document_name = None
                     st.rerun()
     
     # Compact upload section
@@ -208,6 +371,10 @@ with tab1:
                     if not extracted_text or len(extracted_text.strip()) < 10:
                         st.error("❌ Failed to extract text or text is too short!")
                         st.stop()
+                    
+                    # Store extracted text in session state
+                    st.session_state.last_extracted_text = extracted_text
+                    st.session_state.last_document_name = uploaded_file.name
                     
                     st.success(f"✅ Extracted {len(extracted_text)} characters")
                 
@@ -365,16 +532,23 @@ with tab2:
             st.warning("⚠️ No documents yet. Upload one in the first tab!", icon="📄")
             st.stop()
         
-        # Compact status bar
-        col1, col2, col3 = st.columns([2, 1, 1])
-        with col1:
-            st.info(f"📚 {collection_count} segments ready", icon="✅")
+        # Enhanced status bar
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
+                    padding: 1rem; border-radius: 10px; margin: 1rem 0; text-align: center;'>
+            <p style='color: white; margin: 0; font-weight: 600; font-size: 1.1rem;'>
+                ✅ Database Ready • {collection_count} text segments loaded
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        col2, col3 = st.columns(2)
         with col2:
-            if st.button("🔄 Reload", use_container_width=True):
+            if st.button("🔄 Reload Database", use_container_width=True):
                 st.session_state.vectorstore = get_vectorstore("audiobook_embeddings", "./vectordb")
                 st.rerun()
         with col3:
-            if st.button("🗑️ Clear Chat", use_container_width=True):
+            if st.button("🗑️ Clear Chat History", use_container_width=True):
                 st.session_state.chat_history = []
                 st.rerun()
     except Exception as e:
