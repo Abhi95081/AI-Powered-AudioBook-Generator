@@ -5,11 +5,9 @@ Following LangChain best practices for retrieval-augmented generation
 API Key: Automatically loaded from .env file (GOOGLE_API_KEY)
 
 Usage:
-    python rag_langchain.py --query "What is the objective?" --top-k 5 --use-native
-    python rag_langchain.py --query "Explain the workflow" --top-k 3 --use-native --verbose
-    python rag_langchain.py --query "What are the milestones?" --show-sources --use-native
-    
-Note: Use --use-native to avoid Google API quota issues (uses all-MiniLM-L6-v2 embeddings)
+    python rag_langchain.py --query "What is the objective?" --top-k 5
+    python rag_langchain.py --query "Explain the workflow" --top-k 3 --verbose
+    python rag_langchain.py --query "What are the milestones?" --show-sources
 """
 
 import os
@@ -21,7 +19,8 @@ load_dotenv()
 
 # LangChain imports
 from langchain_chroma import Chroma
-from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
@@ -38,11 +37,11 @@ def get_vectorstore(
     persist_directory: str = "./vectordb"
 ) -> Chroma:
     """
-    Load existing ChromaDB vector store with Google Gemini embeddings.
+    Load existing ChromaDB vector store with HuggingFace embeddings (all-MiniLM-L6-v2).
+    Uses local embeddings - no API calls needed.
     """
-    embeddings = GoogleGenerativeAIEmbeddings(
-        model="models/embedding-001",
-        google_api_key=os.getenv("GOOGLE_API_KEY")
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
     
     vectorstore = Chroma(
@@ -51,28 +50,7 @@ def get_vectorstore(
         persist_directory=persist_directory
     )
     
-    logger.info(f"Loaded vector store: {collection_name} from {persist_directory}")
-    return vectorstore
-
-
-def get_vectorstore_native() -> Chroma:
-    """
-    Use HuggingFace embeddings (all-MiniLM-L6-v2) to match existing vector database.
-    This avoids Google API embedding quota issues.
-    """
-    from langchain_community.embeddings import HuggingFaceEmbeddings
-    
-    embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
-    )
-    
-    vectorstore = Chroma(
-        collection_name="audiobook_embeddings",
-        embedding_function=embeddings,
-        persist_directory="./vectordb"
-    )
-    
-    logger.info("Using HuggingFace embeddings (all-MiniLM-L6-v2) - no API quota needed")
+    logger.info(f"Loaded vector store with HuggingFace embeddings: {collection_name}")
     return vectorstore
 
 
@@ -189,8 +167,6 @@ def main():
     parser.add_argument("--model", default="gemini-2.5-flash", help="Gemini model name")
     parser.add_argument("--show-sources", action="store_true", help="Show source documents")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
-    parser.add_argument("--use-native", action="store_true", 
-                       help="Use HuggingFace all-MiniLM-L6-v2 embeddings (avoids Google API quota)")
     
     args = parser.parse_args()
     
@@ -205,11 +181,8 @@ def main():
         return
     
     try:
-        # Load vector store
-        if args.use_native:
-            vectorstore = get_vectorstore_native()
-        else:
-            vectorstore = get_vectorstore(args.collection, args.db_dir)
+        # Load vector store with Google Gemini embeddings
+        vectorstore = get_vectorstore(args.collection, args.db_dir)
         
         # Query
         answer = query_with_sources(

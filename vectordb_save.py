@@ -98,7 +98,8 @@ def save_to_vectordb(
     csv_path: str,
     collection_name: str = "audiobook_embeddings",
     persist_directory: str = "./vectordb",
-    batch_size: int = 100
+    batch_size: int = 100,
+    clear_collection: bool = True
 ) -> str:
     """
     Save embeddings from CSV to vector database.
@@ -108,6 +109,7 @@ def save_to_vectordb(
         collection_name: Name of the vector DB collection
         persist_directory: Directory to persist the database
         batch_size: Number of embeddings to add per batch
+        clear_collection: If True, clears existing collection before adding new documents
         
     Returns:
         Path to vector database directory
@@ -115,11 +117,23 @@ def save_to_vectordb(
     # Load embeddings
     texts, embeddings, metadata = load_embeddings_from_csv(csv_path)
     
+    # Create persistent client
+    client = chromadb.PersistentClient(path=persist_directory)
+    
+    # Clear and recreate collection if requested
+    if clear_collection:
+        try:
+            client.delete_collection(name=collection_name)
+            logger.info(f"Cleared existing collection: {collection_name}")
+        except:
+            pass
+    
     # Create vector DB collection
     collection = create_vectordb(collection_name, persist_directory)
     
-    # Generate IDs for each embedding
-    ids = [f"doc_{i}" for i in range(len(texts))]
+    # Generate unique IDs for each embedding based on source file
+    source_name = Path(csv_path).stem
+    ids = [f"{source_name}_{i}" for i in range(len(texts))]
     
     # Add to collection in batches
     logger.info(f"Adding {len(texts)} documents to collection in batches of {batch_size}...")
