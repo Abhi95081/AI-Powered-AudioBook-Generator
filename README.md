@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # 📚 AI Audiobook Generator - Text Extraction Module
 
 ## 🎯 Overview
