@@ -26,3 +26,8 @@ huggingface/
 
 # Logs
 *.log
+
+# Secrets and local data
+.env
+.env.*
+vectordb/
