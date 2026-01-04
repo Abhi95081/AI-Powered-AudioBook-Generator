@@ -57,12 +57,3 @@ streamlit run app.py
 
 ## To Run This on Cmd Line
 $env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"; .\.venv\Scripts\python.exe watch_uploads.py
-
-
-% ## For open in Excel Sheet.
-% Invoke-Item "C:\Users\ANKITA SINGH\OneDrive\Desktop\infosys\outputs\embeddings\AI AudioBook Generator_extracted_20251111-180528_extracted_embeddings.csv"
-
-
-
-% ## To Run Embadded 
-%  cd "C:\Users\ANKITA SINGH\OneDrive\Desktop\infosys"; python embeddings.py "outputs/text/AI AudioBook Generator_extracted_20251111-180528_extracted.txt"
