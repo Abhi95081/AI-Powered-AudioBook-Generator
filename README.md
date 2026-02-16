@@ -1,4 +1,4 @@
-# OCR → Enrich → TTS (Streamlit)
+# AI-Powered AudioBook Generator
 
 A simple Streamlit app to:
 - Extract text from files (txt, pdf, docx, images)
