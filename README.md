@@ -18,9 +18,7 @@ A simple Streamlit app to:
   - Tesseract OCR: https://github.com/UB-Mannheim/tesseract/wiki
   - Poppler for Windows: https://github.com/oschwartz10612/poppler-windows/releases/
   - Add both to PATH. For Tesseract, the installer usually adds it. If not, set in code:
-    ```python
-    pytesseract.pytesseract.tesseract_cmd = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
-    ```
+
 
 ## Setup
 1. Create and activate a virtual environment
